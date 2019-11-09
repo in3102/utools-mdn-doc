@@ -1,5 +1,5 @@
 {
-  "name": "mdndoc",
+  "name": "utools-mdn-doc",
   "version": "1.0.0",
   "description": "MDN 文档",
   "scripts": {
