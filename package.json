@@ -10,6 +10,7 @@
     "http": "node work.js http"
   },
   "author": "beta",
+  "license": "MIT",
   "devDependencies": {
     "highlight.js": "^9.15.10"
   }
