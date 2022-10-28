@@ -14,7 +14,7 @@ function removeHtmlTag (content) {
 
 function getLanguageRefrence (language) {
   return new Promise((resolve, reject) => {
-    https.get('https://wiki.developer.mozilla.org/zh-CN/docs/Web/' + language.toUpperCase() + '/Index' + '?raw&macros', (res) => {
+    https.get('https://developer.mozilla.org/zh-CN/docs/Web/' + language.toUpperCase() + '?raw&macros', (res) => {
       if (res.statusCode !== 200) {
         return reject(new Error('😱  返回状态码 --- ', res.statusCode))
       }
@@ -22,21 +22,22 @@ function getLanguageRefrence (language) {
       let rawData = ''
       res.on('data', (chunk) => { rawData += chunk })
       res.on('end', () => {
-        const matchs = rawData.match(/<td rowspan="2">\d{1,4}<\/td>\s*<td rowspan="2"><a href="[^"\n]+?">[^<\n]+?<\/a><\/td>/g)
+        const matchs = rawData.match(/<ol>([\s\S]*?)<\/ol>\n<\/div>/g)
+        const regexList = /<li><a href="([^"\n]+?)"[^>\n]*?>(.*?)<\/a><\/li>/g;
+        //const regexSummary=/<summary>([^<\n]+?)<\/summary>/g;
         if (!matchs) {
           return reject(new Error('😱  列表获取失败，未正确解析'))
         }
         let refrences = []
         try {
           matchs.forEach((x, i) => {
-            const matchs = x.match(/<td rowspan="2">(\d{1,4})<\/td>\s*<td rowspan="2"><a href="([^"\n]+?)">([^<\n]+?)<\/a><\/td>/)
-            const index = parseInt(matchs[1])
-            if (index !== i + 1) {
-              throw new Error('第' + (i + 1) + '条索引获取失败')
+            let m;
+            while ((m = regexList.exec(x)) !== null) {
+                if (m.index === regexList.lastIndex) {regexList.lastIndex++;}
+                const src = m[1].trim().replace('/en-US/', '/zh-CN/')
+                const key = removeHtmlTag(m[2].trim())
+                refrences.push({ key, src })
             }
-            const src = matchs[2].trim().replace('/en-US/', '/zh-CN/')
-            const key = removeHtmlTag(matchs[3].trim())
-            refrences.push({ key, src })
           })
         } catch (e) {
           return reject(new Error('😱  ' + e.message))
@@ -52,28 +53,43 @@ function getLanguageRefrence (language) {
 }
 
 // 获取描述摘要
-function getDocSummary (src) {
-  return new Promise((resolve, reject) => {
-    https.get('https://wiki.developer.mozilla.org' + src + '?raw&summary', (res) => {
-      if (res.statusCode !== 200) {
-        return reject(new Error('😱  获取摘要 返回状态码 --- ' + res.statusCode + '\n' + src))
-      }
-      res.setEncoding('utf8')
-      let rawData = ''
-      res.on('data', (chunk) => { rawData += chunk })
-      res.on('end', () => {
-        rawData = removeHtmlTag(rawData).replace(/\s+/g, ' ').trim()
-        resolve(rawData)
+function getDocSummary (src, language) {
+  const filename = crypto.createHash('md5').update(src.toLowerCase()).digest('hex')
+  const cachePath = path.join(__dirname, 'data', language, filename)
+  if (fs.existsSync(cachePath)) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(cachePath, { encoding: 'utf-8' }, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        const matchs = data.match(/"summary":"(.*?)","/)
+        resolve(matchs?matchs[1]:"暂无描述")
       })
     })
-  })
+  } 
+  return reject('error:文档文件不存在')
 }
 
 function convertHtmlContent (lowerSrcArray, htmlContent) {
-  htmlContent = htmlContent.replace(/<section class="Quick_links" id="Quick_Links">[\s\S]+?<\/section>/, '')
+  const match=htmlContent.match(/<article[^>]*>([\s\S]*?)<\/article><\/main>/);
+  if(match){htmlContent=match[1]}
+  
+  const lastModified=htmlContent.match(/<b>Last modified:<\/b> <time[^>]*>(.*)<\/time>/);
+  htmlContent = htmlContent.replace(/<aside class="metadata">.*?<\/aside>/, '')
+  htmlContent = htmlContent.replace(/<ul class="prev-next">.*?<\/ul>/g, '')
+  if(lastModified)
+  {
+    htmlContent+=`<hr/><p class="last-modified-date"><b>最后更新于:</b> <time >${lastModified[1]}</time></p>`
+  }
   if (htmlContent.includes('class="prevnext"')) {
     htmlContent = htmlContent.replace(/<div class="prevnext"[\s\S]+?<\/div>/g, '')
   }
+  if (htmlContent.includes('class="prev-next"')) {
+    htmlContent = htmlContent.replace(/<ul class="prev-next"[\s\S]+?<\/ul>/g, '')
+  }
+  
+  htmlContent = htmlContent.replace(/<section class="Quick_links" id="Quick_Links">[\s\S]+?<\/section>/, '')
+
   if (htmlContent.includes('<iframe ')) {
     htmlContent = htmlContent.replace(/<iframe.+src="([^"\n]+?)"[^>\n]*?>.*?<\/iframe>/g, '<a class="interactive-examples-link" href="$1">查看示例</a>')
   }
@@ -116,7 +132,8 @@ function convertHtmlContent (lowerSrcArray, htmlContent) {
       } else if (url.startsWith('/')) {
         htmlContent = htmlContent.replace(replaceRegex, 'href="https://developer.mozilla.org' + url + anchor + '"')
       } else {
-        htmlContent = htmlContent.replace(replaceRegex, 'href="javascript:void(0)"')
+        //htmlContent = htmlContent.replace(replaceRegex, 'href="javascript:void(0)"')
+        htmlContent = htmlContent.replace(replaceRegex, 'href="'+anchor+'"')
       }
     }
   }
@@ -172,10 +189,13 @@ function getDocPage (lowerSrcArray, src, language) {
     })
   } else {
     return new Promise((resolve, reject) => {
-      https.get('https://wiki.developer.mozilla.org' + src + '?raw&macros', (res) => {
+      https.get('https://developer.mozilla.org' + src + '?raw&macros', (res) => {
         if (res.statusCode !== 200) {
           if (res.statusCode === 301 || res.statusCode === 302) {
             return reject(new Error('redirect:' + res.headers['location']))
+          }
+          if (res.statusCode === 404) {
+            return reject(new Error('notfound:' + src))
           }
           return reject(new Error('🥵  获取页面 返回状态码 *** ' + res.statusCode + '\n' + src))
         }
@@ -210,6 +230,11 @@ async function main () {
     console.log(language + '----------索引获取完成---------')
   }
   const refrences = require('./data/' + language + '-refrences.json')
+  const indexPath=path.join(__dirname, 'public', language, 'docs');
+  if(!fs.existsSync(indexPath))
+  {
+    fs.mkdirSync(indexPath);
+  }
   const lowerSrcArray = refrences.map(x => x.src.toLowerCase())
   const failItems = []
   const indexesFilePath = path.join(__dirname, 'public', language, 'indexes.json')
@@ -225,19 +250,23 @@ async function main () {
     let d
     try {
       p = await getDocPage(lowerSrcArray, item.src, language)
+      
       if (oldIndexes) {
         const oldItem = oldIndexes.find(x => x.t === t)
         if (oldItem) {
           d = oldItem.d
         } else {
-          d = await getDocSummary(item.src)
+          d = await getDocSummary(item.src,language)
         }
       } else {
-        d = await getDocSummary(item.src)
+        d = await getDocSummary(item.src,language)
       }
     } catch (e) {
       if (e.message.startsWith('redirect:')) {
         item.src = e.message.replace('redirect:', '').replace('?raw=&macros=', '')
+      }
+      if (e.message.startsWith('notfound:')) {
+        item.src = e.message.replace('notfound:', '').replace('zh-CN/', 'en-US/')
       }
       failItems.push(item)
       console.log('fail-------', e.message)
@@ -249,8 +278,9 @@ async function main () {
   for (let i = 0; i < failItems.length; i++) {
     const item = failItems[i]
     try {
-      const d = await getDocSummary(item.src)
+      
       const p = await getDocPage(lowerSrcArray, item.src, language)
+      const d = await getDocSummary(item.src,language)
       indexes.push({ t: item.key, p, d })
     } catch (e) {
       console.log('重试获取失败---------', e.message)
