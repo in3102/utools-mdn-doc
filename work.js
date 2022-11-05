@@ -14,17 +14,18 @@ function removeHtmlTag (content) {
 
 function getLanguageRefrence (language) {
   return new Promise((resolve, reject) => {
-    https.get('https://developer.mozilla.org/zh-CN/docs/Web/' + language.toUpperCase() + '?raw&macros', (res) => {
+    language=language.toUpperCase();
+    const docUrlBase='https://developer.mozilla.org/zh-CN/docs/Web/' + language;
+    https.get(docUrlBase, (res) => {
       if (res.statusCode !== 200) {
-        return reject(new Error('😱  返回状态码 --- ', res.statusCode))
+        return reject(new Error('😱  入口返回状态码 --- ', res.statusCode))
       }
       res.setEncoding('utf8')
       let rawData = ''
       res.on('data', (chunk) => { rawData += chunk })
-      res.on('end', () => {
+      res.on('end', async () => {
         const matchs = rawData.match(/<ol>([\s\S]*?)<\/ol>\n<\/div>/g)
-        const regexList = /<li><a href="([^"\n]+?)"[^>\n]*?>(.*?)<\/a><\/li>/g;
-        //const regexSummary=/<summary>([^<\n]+?)<\/summary>/g;
+        const regexList = /<li>[\s\S]*?<a[^>]*?href="([^"]*?)">([^>\n]*?)<\/a><\/li>/g;
         if (!matchs) {
           return reject(new Error('😱  列表获取失败，未正确解析'))
         }
@@ -42,13 +43,62 @@ function getLanguageRefrence (language) {
         } catch (e) {
           return reject(new Error('😱  ' + e.message))
         }
+        let refrencesResult=[];
+        refrencesResult.push(...refrences);
+        if(language=='JAVASCRIPT')
+        {
+          //额外获取一下 标准内置对象 的二级目录
+          console.log("🍺一级目录获取完毕,开始获取二级目录");
+          for (let index = 0; index < refrences.length; index++) {
+            if(refrences[index].src.includes('Global_Objects/'))
+            {
+                console.log('get------'+refrences[index].src)
+                const urls=await getCatalogue(refrences[index].src,language)
+                refrencesResult.push(...urls);
+            }
+          }
+        }
         if (!fs.existsSync(path.join(__dirname, 'data'))) {
           fs.mkdirSync(path.join(__dirname, 'data'))
         }
-        fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrences, null, 2))
+        fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrencesResult, null, 2))
         resolve()
       })
     }).on('error', (e) => { reject(e) })
+  })
+}
+//获取二级目录
+function getCatalogue (url,language) {
+  return new Promise(async (resolve, reject) => {
+    let urlbase='https://developer.mozilla.org'+url;
+    let res;
+    try{
+      res=await getPage(urlbase,language);
+    }catch(e)
+    {
+      if (e.message.startsWith('notfound:')) {
+        urlbase = e.message.replace('notfound:', '').replace('zh-CN/', 'en-US/')
+        console.log('retry------'+urlbase)
+        res=await getPage(urlbase,language);
+      }
+    }
+    const regexList = /<li>[\s\S]*?<a[^>]*?href="([^"]*?)"><code>([^>\n]*?)<\/code>/g;
+      let refrences = []
+      try {
+          while ((m = regexList.exec(res)) !== null) {
+              if (m.index === regexList.lastIndex) {regexList.lastIndex++;}
+              const src = m[1].trim().replace('/en-US/', '/zh-CN/')
+              if(!src.includes(url))
+              {
+                break;
+              }
+              const key = removeHtmlTag(m[2].trim())
+              refrences.push({ key, src })
+          }
+      } catch (e) {
+        return reject(new Error('😱  获取二级目录出错:' + e.message))
+      }
+      resolve(refrences)
   })
 }
 
@@ -173,6 +223,48 @@ function convertHtmlContent (lowerSrcArray, htmlContent) {
   // }
 }
 
+function getPage(url,language)
+{
+  const filename = crypto.createHash('md5').update(url.toLowerCase()).digest('hex')
+  const cachePath = path.join(__dirname, 'data', language, filename)
+  if (fs.existsSync(cachePath)) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(cachePath, { encoding: 'utf-8' }, (err, data) => {
+        if (err) {
+          return reject(err)
+        }
+        resolve(data)
+      })
+    })
+  } else {
+    return new Promise((resolve, reject) => {
+      https.get(url, (res) => {
+        if (res.statusCode !== 200) {
+          if (res.statusCode === 301 || res.statusCode === 302) {
+            return reject(new Error('redirect:' + res.headers['location']))
+          }
+          if (res.statusCode === 404) {
+            return reject(new Error('notfound:' + url))
+          }
+          return reject(new Error('🥵  获取页面 返回状态码 *** ' + res.statusCode + '\n' + src))
+        }
+        res.setEncoding('utf8')
+        let rawData = ''
+        res.on('data', (chunk) => { rawData += chunk })
+        res.on('end', () => {
+          // 保存一份缓存
+          const cacheDir = path.join(__dirname, 'data', language)
+          if (!fs.existsSync(cacheDir)) {
+            fs.mkdirSync(cacheDir)
+          }
+          fs.writeFileSync(cachePath, rawData)
+          resolve(rawData)
+        })
+      })
+    })
+  }
+}
+
 // 获取页面
 function getDocPage (lowerSrcArray, src, language) {
   const filename = crypto.createHash('md5').update(src.toLowerCase()).digest('hex')
@@ -273,7 +365,7 @@ async function main () {
       continue
     }
     indexes.push({ t, p, d })
-    console.log('ok-------', item.src)
+    console.log(`[${i+1}/${refrences.length}]ok-------`, item.src)
   }
   for (let i = 0; i < failItems.length; i++) {
     const item = failItems[i]
