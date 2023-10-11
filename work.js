@@ -33,6 +33,8 @@ function getLanguageRefrence (language) {
         try {
           matchs.forEach((x, i) => {
             let m;
+            //<code>&lt;a&gt;</code>
+            x=x.replace(/<code>(.*?)<\/code>/g,'$1')
             while ((m = regexList.exec(x)) !== null) {
                 if (m.index === regexList.lastIndex) {regexList.lastIndex++;}
                 const src = m[1].trim().replace('/en-US/', '/zh-CN/')
@@ -322,11 +324,17 @@ async function main () {
     console.log(language + '----------索引获取完成---------')
   }
   const refrences = require('./data/' + language + '-refrences.json')
+  //将入口页面也增加下采集
+  refrences.unshift({
+    "key": language,
+    "src": '/zh-CN/docs/Web/'+language
+  });
   const indexPath=path.join(__dirname, 'public', language, 'docs');
   if(!fs.existsSync(indexPath))
   {
     fs.mkdirSync(indexPath);
   }
+  //所有网址转小写,对比使用
   const lowerSrcArray = refrences.map(x => x.src.toLowerCase())
   const failItems = []
   const indexesFilePath = path.join(__dirname, 'public', language, 'indexes.json')
@@ -367,6 +375,10 @@ async function main () {
     indexes.push({ t, p, d })
     console.log(`[${i+1}/${refrences.length}]ok-------`, item.src)
   }
+  if(failItems.length>0)
+  {
+    console.log('再尝试获取下刚才失败的'+failItems.length+'个网址,检查下是否有英文版');
+  }
   for (let i = 0; i < failItems.length; i++) {
     const item = failItems[i]
     try {
@@ -374,6 +386,7 @@ async function main () {
       const p = await getDocPage(lowerSrcArray, item.src, language)
       const d = await getDocSummary(item.src,language)
       indexes.push({ t: item.key, p, d })
+      console.log(`[${i+1}/${failItems.length}]ok-------`, item.src)
     } catch (e) {
       console.log('重试获取失败---------', e.message)
     }
@@ -381,7 +394,7 @@ async function main () {
   fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrences, null, 2))
   fs.writeFileSync(indexesFilePath, JSON.stringify(indexes))
   fs.copyFileSync(path.join(__dirname, 'doc.css'), path.join(__dirname, 'public', language, 'docs', 'doc.css'))
-  console.log('--------  😁 😁 😁 😁 😁 😁 😁 😁 😁 😁 --------')
+  console.log('--------  😁 全部完成,共计'+indexes.length+'篇文档 --------')
 }
 
 main()
