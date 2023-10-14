@@ -3,9 +3,11 @@ const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
 const hljs = require('highlight.js/lib/highlight.js')
+const support = require('./lib/support.js')
 hljs.registerLanguage('javascript', require('highlight.js/lib/languages/javascript'))
 hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
 hljs.registerLanguage('css', require('highlight.js/lib/languages/css'))
+const URL_BASE='https://developer.mozilla.org/zh-CN/docs/Web/';
 
 function removeHtmlTag (content) {
   content = content.replace(/(?:<\/?[a-z][a-z1-6]{0,9}>|<[a-z][a-z1-6]{0,9} .+?>)/gi, '')
@@ -15,7 +17,7 @@ function removeHtmlTag (content) {
 function getLanguageRefrence (language) {
   return new Promise((resolve, reject) => {
     language=language.toUpperCase();
-    const docUrlBase='https://developer.mozilla.org/zh-CN/docs/Web/' + language;
+    const docUrlBase=URL_BASE + language;
     https.get(docUrlBase, (res) => {
       if (res.statusCode !== 200) {
         return reject(new Error('😱  入口返回状态码 --- ', res.statusCode))
@@ -63,6 +65,11 @@ function getLanguageRefrence (language) {
         if (!fs.existsSync(path.join(__dirname, 'data'))) {
           fs.mkdirSync(path.join(__dirname, 'data'))
         }
+        //将入口页面也增加下采集
+        refrencesResult.unshift({
+          "key": language,
+          "src": '/zh-CN/docs/Web/'+language
+        });
         fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrencesResult, null, 2))
         resolve()
       })
@@ -121,7 +128,12 @@ function getDocSummary (src, language) {
   } 
   return reject('error:文档文件不存在')
 }
-
+/**
+ * 转换HTML内容
+ * @param {Array} lowerSrcArray 已转为小写的所有网址列表
+ * @param {String} htmlContent 当前页面的HTML源代码
+ * @return {String} 处理后的文档页面
+ */
 function convertHtmlContent (lowerSrcArray, htmlContent) {
   const match=htmlContent.match(/<article[^>]*>([\s\S]*?)<\/article><\/main>/);
   if(match){htmlContent=match[1]}
@@ -267,17 +279,26 @@ function getPage(url,language)
   }
 }
 
-// 获取页面
+/**
+ * 获取文档页面
+ * @param {Array} lowerSrcArray 已转为小写的所有网址列表
+ * @param {String} src 当前页面网址
+ * @param {String} language 当前语言
+ * @return {String} 处理后的文档路径
+ */
 function getDocPage (lowerSrcArray, src, language) {
   const filename = crypto.createHash('md5').update(src.toLowerCase()).digest('hex')
   const cachePath = path.join(__dirname, 'data', language, filename)
   if (fs.existsSync(cachePath)) {
     return new Promise((resolve, reject) => {
-      fs.readFile(cachePath, { encoding: 'utf-8' }, (err, data) => {
+      fs.readFile(cachePath, { encoding: 'utf-8' }, async (err, data) => {
         if (err) {
           return reject(err)
         }
-        fs.writeFileSync(path.join(__dirname, 'public', language, 'docs', filename + '.html'), convertHtmlContent(lowerSrcArray, data))
+        const html = data.toString()
+        let content = convertHtmlContent(lowerSrcArray, html)
+        content = await support.changeBrowserSupport(html,content)
+        fs.writeFileSync(path.join(__dirname, 'public', language, 'docs', filename + '.html'), content)
         resolve('docs/' + filename + '.html')
       })
     })
@@ -296,14 +317,17 @@ function getDocPage (lowerSrcArray, src, language) {
         res.setEncoding('utf8')
         let rawData = ''
         res.on('data', (chunk) => { rawData += chunk })
-        res.on('end', () => {
+        res.on('end', async () => {
           // 保存一份缓存
           const cacheDir = path.join(__dirname, 'data', language)
           if (!fs.existsSync(cacheDir)) {
             fs.mkdirSync(cacheDir)
           }
           fs.writeFileSync(path.join(cacheDir, filename), rawData)
-          fs.writeFileSync(path.join(__dirname, 'public', language, 'docs', filename + '.html'), convertHtmlContent(lowerSrcArray, rawData))
+          const html = rawData.toString()
+          let content = convertHtmlContent(lowerSrcArray, html)
+          content = await support.changeBrowserSupport(html,content)
+          fs.writeFileSync(path.join(__dirname, 'public', language, 'docs', filename + '.html'), content)
           resolve('docs/' + filename + '.html')
         })
       })
@@ -311,6 +335,52 @@ function getDocPage (lowerSrcArray, src, language) {
   }
 }
 
+function copyFolder(source, target) {
+  if (!fs.existsSync(target)) {
+    fs.mkdirSync(target)
+  }
+
+  // 读取源文件夹中的所有文件/文件夹
+  const files = fs.readdirSync(source);
+
+  // 遍历所有文件/文件夹
+  files.forEach(file => {
+    const sourcePath = path.join(source, file);
+    const targetPath = path.join(target, file);
+
+    // 判断当前文件是否为文件夹
+    if (fs.statSync(sourcePath).isDirectory()) {
+      // 如果是文件夹，递归拷贝子文件夹
+      copyFolder(sourcePath, targetPath);
+    } else {
+      // 如果是文件，直接拷贝
+      fs.copyFileSync(sourcePath, targetPath);
+    }
+  });
+}
+/**
+ * 更新文档中的 更新时间 和 文档数量
+ * @param {String} language 语言
+ * @param {Number} count 文档数量
+ */
+function updateReadMe(language,count)
+{
+  // 最后更新: 2023-10-14 // 文档数量: 197 篇
+  const readmePath=path.join(__dirname, 'public', language, 'README.md');
+  fs.readFile(readmePath, { encoding: 'utf-8' }, async (err, data) => {
+    if (err) {
+      return
+    }
+    const doc = data.toString()
+    const reg = /最后更新: \d{4}-\d{2}-\d{2}/
+    const reg2 = /文档数量: \d+ 篇/
+    const date = new Date()
+    const dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+    const newDoc = doc.replace(reg, '最后更新: ' + dateStr).replace(reg2, '文档数量: ' + count + ' 篇')
+    fs.writeFileSync(readmePath, newDoc)
+  })
+
+}
 async function main () {
   const argv = process.argv.slice(2)
   const language = argv[0]
@@ -324,11 +394,6 @@ async function main () {
     console.log(language + '----------索引获取完成---------')
   }
   const refrences = require('./data/' + language + '-refrences.json')
-  //将入口页面也增加下采集
-  refrences.unshift({
-    "key": language,
-    "src": '/zh-CN/docs/Web/'+language
-  });
   const indexPath=path.join(__dirname, 'public', language, 'docs');
   if(!fs.existsSync(indexPath))
   {
@@ -381,8 +446,12 @@ async function main () {
   }
   for (let i = 0; i < failItems.length; i++) {
     const item = failItems[i]
+    if(item.src.indexOf(":")!=-1)
+    {
+      console.log('不是官网的网址,跳过',item.src);
+      continue;
+    }
     try {
-      
       const p = await getDocPage(lowerSrcArray, item.src, language)
       const d = await getDocSummary(item.src,language)
       indexes.push({ t: item.key, p, d })
@@ -394,6 +463,8 @@ async function main () {
   fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrences, null, 2))
   fs.writeFileSync(indexesFilePath, JSON.stringify(indexes))
   fs.copyFileSync(path.join(__dirname, 'doc.css'), path.join(__dirname, 'public', language, 'docs', 'doc.css'))
+  copyFolder(path.join(__dirname, 'images'), path.join(__dirname, 'public', language, 'docs', 'images'))
+  updateReadMe(language,indexes.length)
   console.log('--------  😁 全部完成,共计'+indexes.length+'篇文档 --------')
 }
 
