@@ -361,9 +361,9 @@ function copyFolder(source, target) {
 /**
  * 更新文档中的 更新时间 和 文档数量
  * @param {String} language 语言
- * @param {Number} count 文档数量
+ * @param {Array} indexes 文档目录
  */
-function updateReadMe(language,count)
+function updateReadMe(language,indexes)
 {
   // 最后更新: 2023-10-14 // 文档数量: 197 篇
   const readmePath=path.join(__dirname, 'public', language, 'README.md');
@@ -376,7 +376,10 @@ function updateReadMe(language,count)
     const reg2 = /文档数量: \d+ 篇/
     const date = new Date()
     const dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-    const newDoc = doc.replace(reg, '最后更新: ' + dateStr).replace(reg2, '文档数量: ' + count + ' 篇')
+    let newDoc = doc.replace(reg, '最后更新: ' + dateStr).replace(reg2, '文档数量: ' + indexes.length + ' 篇')
+    const regCatalogue = /(文档目录:\s+)[\s\S]+/
+    let catalogue = indexes.map(item=>item.t).join("\r\n")
+    newDoc = newDoc.replace(regCatalogue,"$1")+catalogue
     fs.writeFileSync(readmePath, newDoc)
   })
 
@@ -408,7 +411,9 @@ async function main () {
   if (fs.existsSync(indexesFilePath)) {
     oldIndexes = require('./public/' + language + '/indexes.json')
   }
+  const lenStrLen=String(refrences.length).length;
   for (let i = 0; i < refrences.length; i++) {
+    const logStart=`[${String(i+1).padStart(lenStrLen,'0')}/${refrences.length}]`
     const item = refrences[i]
     let t = item.key
     let p
@@ -434,17 +439,19 @@ async function main () {
         item.src = e.message.replace('notfound:', '').replace('zh-CN/', 'en-US/')
       }
       failItems.push(item)
-      console.log('fail-------', e.message)
+      console.log(logStart,'💢', e.message)
       continue
     }
     indexes.push({ t, p, d })
-    console.log(`[${i+1}/${refrences.length}]ok-------`, item.src)
+    console.log(logStart,'✅', item.src)
   }
   if(failItems.length>0)
   {
     console.log('再尝试获取下刚才失败的'+failItems.length+'个网址,检查下是否有英文版');
   }
+  const lenStrLen2=String(failItems.length).length;
   for (let i = 0; i < failItems.length; i++) {
+    const logStart=`[${String(i+1).padStart(lenStrLen2,'0')}/${failItems.length}]`
     const item = failItems[i]
     if(item.src.indexOf(":")!=-1)
     {
@@ -455,16 +462,16 @@ async function main () {
       const p = await getDocPage(lowerSrcArray, item.src, language)
       const d = await getDocSummary(item.src,language)
       indexes.push({ t: item.key, p, d })
-      console.log(`[${i+1}/${failItems.length}]ok-------`, item.src)
+      console.log(logStart,'✅', item.src)
     } catch (e) {
-      console.log('重试获取失败---------', e.message)
+      console.log(logStart,'💢', e.message)
     }
   }
   fs.writeFileSync(path.join(__dirname, 'data', language + '-refrences.json'), JSON.stringify(refrences, null, 2))
   fs.writeFileSync(indexesFilePath, JSON.stringify(indexes))
   fs.copyFileSync(path.join(__dirname, 'doc.css'), path.join(__dirname, 'public', language, 'docs', 'doc.css'))
   copyFolder(path.join(__dirname, 'images'), path.join(__dirname, 'public', language, 'docs', 'images'))
-  updateReadMe(language,indexes.length)
+  updateReadMe(language,indexes)
   console.log('--------  😁 全部完成,共计'+indexes.length+'篇文档 --------')
 }
 
