@@ -378,7 +378,7 @@ function updateReadMe(language,indexes)
     const dateStr = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
     let newDoc = doc.replace(reg, '最后更新: ' + dateStr).replace(reg2, '文档数量: ' + indexes.length + ' 篇')
     const regCatalogue = /(文档目录:\s+)[\s\S]+/
-    let catalogue = indexes.map(item=>item.t).join("\r\n")
+    let catalogue = indexes.map(item=>'- '+item.t).join("\r\n")
     newDoc = newDoc.replace(regCatalogue,"$1")+catalogue
     fs.writeFileSync(readmePath, newDoc)
   })
