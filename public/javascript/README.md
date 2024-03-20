@@ -1,1 +1,891 @@
 文档来源 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript
+
+本插件已开源 https://github.com/itldg/utools-mdn-doc
+
+插件代码改自 https://github.com/in3102/utools-mdn-doc
+
+最后更新: 2023-12-29
+
+文档数量: 877 篇
+
+> 若您发现官方文档已更新,可提交问题来告知我 https://github.com/itldg/utools-mdn-doc/issues
+
+文档目录: 
+
+- JAVASCRIPT
+- JavaScript 基础知识
+- JavaScript 第一步
+- 构建 JavaScript 代码块
+- 介绍 JavaScript 对象
+- 介绍
+- 语法和数据类型
+- 流程控制与错误处理
+- 循环与迭代
+- 函数
+- 表达式与运算符
+- 数字和日期
+- 文本格式化
+- 正则表达式
+- 索引集合类
+- 带键的集合
+- 使用对象
+- 使用类
+- 使用 Promise
+- JavaScript 类型化数组
+- 迭代器和生成器
+- 元编程
+- JavaScript 模块
+- 客户端 JavaScript 框架
+- 客户端 Web API
+- 语言概述
+- JavaScript 数据结构
+- 如何正确判断相等性
+- 属性的可枚举性和所有权
+- 闭包
+- 继承和原型链
+- 内存管理
+- 并发模型与事件循环
+- 概述
+- AggregateError
+- Array
+- ArrayBuffer
+- AsyncFunction
+- AsyncGenerator
+- AsyncGeneratorFunction
+- AsyncIterator
+- Atomics
+- BigInt
+- BigInt64Array
+- BigUint64Array
+- Boolean
+- DataView
+- Date
+- decodeURI()
+- decodeURIComponent()
+- encodeURI()
+- encodeURIComponent()
+- Error
+- eval()
+- EvalError
+- FinalizationRegistry
+- Float32Array
+- Float64Array
+- Function
+- Generator
+- GeneratorFunction
+- globalThis
+- Infinity
+- Int16Array
+- Int32Array
+- Int8Array
+- Intl
+- isFinite()
+- isNaN()
+- Iterator
+- JSON
+- Map
+- Math
+- NaN
+- Number
+- Object
+- parseFloat()
+- parseInt()
+- Promise
+- Proxy
+- RangeError
+- ReferenceError
+- Reflect
+- RegExp
+- Set
+- SharedArrayBuffer
+- String
+- Symbol
+- SyntaxError
+- TypedArray
+- TypeError
+- Uint16Array
+- Uint32Array
+- Uint8Array
+- Uint8ClampedArray
+- undefined
+- URIError
+- WeakMap
+- WeakRef
+- WeakSet
+- 概述
+- Addition (+)
+- Addition assignment (+=)
+- Assignment (=)
+- async function expression
+- async function* expression
+- await
+- Bitwise AND (&)
+- Bitwise AND assignment (&=)
+- Bitwise NOT (~)
+- Bitwise OR (|)
+- Bitwise OR assignment (|=)
+- Bitwise XOR (^)
+- Bitwise XOR assignment (^=)
+- class expression
+- Comma operator (,)
+- Conditional (ternary) operator
+- Decrement (--)
+- delete
+- Destructuring assignment
+- Division (/)
+- Division assignment (/=)
+- Equality (==)
+- Exponentiation (**)
+- Exponentiation assignment (**=)
+- function expression
+- function* expression
+- Greater than (>)
+- Greater than or equal (>=)
+- Grouping operator ( )
+- import.meta
+- import()
+- in
+- Increment (++)
+- Inequality (!=)
+- instanceof
+- Left shift (<<)
+- Left shift assignment (<<=)
+- Less than (<)
+- Less than or equal (<=)
+- Logical AND (&&)
+- Logical AND assignment (&&=)
+- Logical NOT (!)
+- Logical OR (||)
+- Logical OR assignment (||=)
+- Multiplication (*)
+- Multiplication assignment (*=)
+- new
+- new.target
+- null
+- Nullish coalescing assignment (??=)
+- Nullish coalescing operator (??)
+- Object initializer
+- Operator precedence
+- Optional chaining (?.)
+- Property accessors
+- Remainder (%)
+- Remainder assignment (%=)
+- Right shift (>>)
+- Right shift assignment (>>=)
+- Spread syntax (...)
+- Strict equality (===)
+- Strict inequality (!==)
+- Subtraction (-)
+- Subtraction assignment (-=)
+- super
+- this
+- typeof
+- Unary negation (-)
+- Unary plus (+)
+- Unsigned right shift (>>>)
+- Unsigned right shift assignment (>>>=)
+- void operator
+- yield
+- yield*
+- 概述
+- async function
+- async function*
+- Block statement
+- break
+- class
+- const
+- continue
+- debugger
+- do...while
+- Empty statement
+- export
+- Expression statement
+- for
+- for await...of
+- for...in
+- for...of
+- function
+- function*
+- if...else
+- import
+- Labeled statement
+- let
+- return
+- switch
+- throw
+- try...catch
+- var
+- while
+- 概述
+- Arrow function expressions
+- Default parameters
+- get
+- Method definitions
+- Rest parameters
+- set
+- The arguments object
+- 概述
+- constructor
+- extends
+- Private properties
+- Public class fields
+- static
+- Static initialization blocks
+- 概述
+- Backreference: \1, \2
+- Capturing group: (...)
+- Character class escape: \d, \D, \w, \W, \s, \S
+- Character class: [...], [^...]
+- Character escape: \n, \u{...}
+- Disjunction: |
+- Input boundary assertion: ^, $
+- Literal character: a, b
+- Lookahead assertion: (?=...), (?!...)
+- Lookbehind assertion: (?<=...), (?<!...)
+- Named backreference: \k<name>
+- Named capturing group: (?<name>...)
+- Non-capturing group: (?:...)
+- Quantifier: *, +, ?, {n}, {n,}, {n,m}
+- Unicode character class escape: \p{...}, \P{...}
+- Wildcard: .
+- Word boundary assertion: \b, \B
+- 概述
+- Error: Permission denied to access property "x"
+- InternalError: too much recursion
+- RangeError: argument is not a valid code point
+- RangeError: BigInt division by zero
+- RangeError: BigInt negative exponent
+- RangeError: invalid array length
+- RangeError: invalid date
+- RangeError: precision is out of range
+- RangeError: radix must be an integer
+- RangeError: repeat count must be less than infinity
+- RangeError: repeat count must be non-negative
+- RangeError: x can't be converted to BigInt because it isn't an integer
+- ReferenceError: "x" is not defined
+- ReferenceError: assignment to undeclared variable "x"
+- ReferenceError: can't access lexical declaration 'X' before initialization
+- ReferenceError: deprecated caller or arguments usage
+- ReferenceError: reference to undefined property "x"
+- SyntaxError: "0"-prefixed octal literals and octal escape seq. are deprecated
+- SyntaxError: "use strict" not allowed in function with non-simple parameters
+- SyntaxError: "x" is a reserved identifier
+- SyntaxError: a declaration in the head of a for-of loop can't have an initializer
+- SyntaxError: applying the 'delete' operator to an unqualified name is deprecated
+- SyntaxError: await is only valid in async functions, async generators and modules
+- SyntaxError: cannot use `??` unparenthesized within `||` and `&&` expressions
+- SyntaxError: continue must be inside loop
+- SyntaxError: for-in loop head declarations may not have initializers
+- SyntaxError: function statement requires a name
+- SyntaxError: getter and setter for private name #x should either be both static or non-static
+- SyntaxError: identifier starts immediately after numeric literal
+- SyntaxError: illegal character
+- SyntaxError: invalid assignment left-hand side
+- SyntaxError: invalid BigInt syntax
+- SyntaxError: invalid regular expression flag "x"
+- SyntaxError: JSON.parse: bad parsing
+- SyntaxError: label not found
+- SyntaxError: missing ; before statement
+- SyntaxError: missing : after property id
+- SyntaxError: missing ) after argument list
+- SyntaxError: missing ) after condition
+- SyntaxError: missing ] after element list
+- SyntaxError: missing } after function body
+- SyntaxError: missing } after property list
+- SyntaxError: missing = in const declaration
+- SyntaxError: missing formal parameter
+- SyntaxError: missing name after . operator
+- SyntaxError: missing variable name
+- SyntaxError: redeclaration of formal parameter "x"
+- SyntaxError: return not in function
+- SyntaxError: test for equality (==) mistyped as assignment (=)?
+- SyntaxError: Unexpected '#' used outside of class body
+- SyntaxError: Unexpected token
+- SyntaxError: unlabeled break must be inside loop or switch
+- SyntaxError: unparenthesized unary expression can't appear on the left-hand side of '**'
+- SyntaxError: unterminated string literal
+- SyntaxError: Using //@ to indicate sourceURL pragmas is deprecated. Use //# instead
+- TypeError: 'x' is not iterable
+- TypeError: "x" has no properties
+- TypeError: "x" is (not) "y"
+- TypeError: "x" is not a constructor
+- TypeError: "x" is not a function
+- TypeError: "x" is not a non-null object
+- TypeError: "x" is read-only
+- TypeError: can't assign to property "x" on "y": not an object
+- TypeError: can't convert BigInt to number
+- TypeError: can't convert x to BigInt
+- TypeError: can't define property "x": "obj" is not extensible
+- TypeError: can't delete non-configurable array element
+- TypeError: can't redefine non-configurable property "x"
+- TypeError: cannot use 'in' operator to search for 'x' in 'y'
+- TypeError: cyclic object value
+- TypeError: invalid 'instanceof' operand 'x'
+- TypeError: invalid Array.prototype.sort argument
+- TypeError: invalid assignment to const "x"
+- TypeError: More arguments needed
+- TypeError: property "x" is non-configurable and can't be deleted
+- TypeError: Reduce of empty array with no initial value
+- TypeError: setting getter-only property "x"
+- TypeError: X.prototype.y called on incompatible type
+- URIError: malformed URI sequence
+- Warning: -file- is being assigned a //# sourceMappingURL, but already has one
+- Warning: unreachable code after return statement
+- JavaScript 技术概要
+- 词法文法
+- 迭代协议
+- 严格模式
+- 模板字符串
+- 尾后逗号
+- 已废弃的特性
+- AggregateError() constructor
+- AggregateError: errors
+- Array() constructor
+- Array[@@species]
+- Array.prototype[@@unscopables]
+- Array: length
+- Array.prototype[@@iterator]()
+- Array.prototype.at()
+- Array.prototype.concat()
+- Array.prototype.copyWithin()
+- Array.prototype.entries()
+- Array.prototype.every()
+- Array.prototype.fill()
+- Array.prototype.filter()
+- Array.prototype.find()
+- Array.prototype.findIndex()
+- Array.prototype.findLast()
+- Array.prototype.findLastIndex()
+- Array.prototype.flat()
+- Array.prototype.flatMap()
+- Array.prototype.forEach()
+- Array.from()
+- Array.fromAsync()
+- Array.prototype.includes()
+- Array.prototype.indexOf()
+- Array.isArray()
+- Array.prototype.join()
+- Array.prototype.keys()
+- Array.prototype.lastIndexOf()
+- Array.prototype.map()
+- Array.of()
+- Array.prototype.pop()
+- Array.prototype.push()
+- Array.prototype.reduce()
+- Array.prototype.reduceRight()
+- Array.prototype.reverse()
+- Array.prototype.shift()
+- Array.prototype.slice()
+- Array.prototype.some()
+- Array.prototype.sort()
+- Array.prototype.splice()
+- Array.prototype.toLocaleString()
+- Array.prototype.toReversed()
+- Array.prototype.toSorted()
+- Array.prototype.toSpliced()
+- Array.prototype.toString()
+- Array.prototype.unshift()
+- Array.prototype.values()
+- Array.prototype.with()
+- ArrayBuffer() constructor
+- ArrayBuffer[@@species]
+- ArrayBuffer.prototype.byteLength
+- ArrayBuffer.prototype.detached
+- ArrayBuffer.prototype.maxByteLength
+- ArrayBuffer.prototype.resizable
+- ArrayBuffer.isView()
+- ArrayBuffer.prototype.resize()
+- ArrayBuffer.prototype.slice()
+- ArrayBuffer.prototype.transfer()
+- ArrayBuffer.prototype.transferToFixedLength()
+- AsyncFunction() constructor
+- AsyncGenerator.prototype.next()
+- AsyncGenerator.prototype.return()
+- AsyncGenerator.prototype.throw()
+- AsyncGeneratorFunction() constructor
+- AsyncIterator.prototype[@@asyncIterator]()
+- Atomics.add()
+- Atomics.and()
+- Atomics.compareExchange()
+- Atomics.exchange()
+- Atomics.isLockFree()
+- Atomics.load()
+- Atomics.notify()
+- Atomics.or()
+- Atomics.store()
+- Atomics.sub()
+- Atomics.wait()
+- Atomics.waitAsync()
+- Atomics.xor()
+- BigInt() constructor
+- BigInt.asIntN()
+- BigInt.asUintN()
+- BigInt.prototype.toLocaleString()
+- BigInt.prototype.toString()
+- BigInt.prototype.valueOf()
+- Boolean() constructor
+- Boolean.prototype.toString()
+- Boolean.prototype.valueOf()
+- DataView() constructor
+- DataView.prototype.buffer
+- DataView.prototype.byteLength
+- DataView.prototype.byteOffset
+- DataView.prototype.getBigInt64()
+- DataView.prototype.getBigUint64()
+- DataView.prototype.getFloat32()
+- DataView.prototype.getFloat64()
+- DataView.prototype.getInt16()
+- DataView.prototype.getInt32()
+- DataView.prototype.getInt8()
+- DataView.prototype.getUint16()
+- DataView.prototype.getUint32()
+- DataView.prototype.getUint8()
+- DataView.prototype.setBigInt64()
+- DataView.prototype.setBigUint64()
+- DataView.prototype.setFloat32()
+- DataView.prototype.setFloat64()
+- DataView.prototype.setInt16()
+- DataView.prototype.setInt32()
+- DataView.prototype.setInt8()
+- DataView.prototype.setUint16()
+- DataView.prototype.setUint32()
+- DataView.prototype.setUint8()
+- Date() constructor
+- Date.prototype[@@toPrimitive]()
+- Date.prototype.getDate()
+- Date.prototype.getDay()
+- Date.prototype.getFullYear()
+- Date.prototype.getHours()
+- Date.prototype.getMilliseconds()
+- Date.prototype.getMinutes()
+- Date.prototype.getMonth()
+- Date.prototype.getSeconds()
+- Date.prototype.getTime()
+- Date.prototype.getTimezoneOffset()
+- Date.prototype.getUTCDate()
+- Date.prototype.getUTCDay()
+- Date.prototype.getUTCFullYear()
+- Date.prototype.getUTCHours()
+- Date.prototype.getUTCMilliseconds()
+- Date.prototype.getUTCMinutes()
+- Date.prototype.getUTCMonth()
+- Date.prototype.getUTCSeconds()
+- Date.prototype.getYear()
+- Date.now()
+- Date.parse()
+- Date.prototype.setDate()
+- Date.prototype.setFullYear()
+- Date.prototype.setHours()
+- Date.prototype.setMilliseconds()
+- Date.prototype.setMinutes()
+- Date.prototype.setMonth()
+- Date.prototype.setSeconds()
+- Date.prototype.setTime()
+- Date.prototype.setUTCDate()
+- Date.prototype.setUTCFullYear()
+- Date.prototype.setUTCHours()
+- Date.prototype.setUTCMilliseconds()
+- Date.prototype.setUTCMinutes()
+- Date.prototype.setUTCMonth()
+- Date.prototype.setUTCSeconds()
+- Date.prototype.setYear()
+- Date.prototype.toDateString()
+- Date.prototype.toISOString()
+- Date.prototype.toJSON()
+- Date.prototype.toLocaleDateString()
+- Date.prototype.toLocaleString()
+- Date.prototype.toLocaleTimeString()
+- Date.prototype.toString()
+- Date.prototype.toTimeString()
+- Date.prototype.toUTCString()
+- Date.UTC()
+- Date.prototype.valueOf()
+- Error() constructor
+- Error: cause
+- Error: columnNumber
+- Error: fileName
+- Error: lineNumber
+- Error: message
+- Error.prototype.name
+- Error.prototype.stack
+- Error.prototype.toString()
+- FinalizationRegistry() constructor
+- FinalizationRegistry.prototype.register()
+- FinalizationRegistry.prototype.unregister()
+- Function() constructor
+- Function.prototype.arguments
+- Function.prototype.caller
+- Function: displayName
+- Function: length
+- Function: name
+- Function: prototype
+- Function.prototype[@@hasInstance]()
+- Function.prototype.apply()
+- Function.prototype.bind()
+- Function.prototype.call()
+- Function.prototype.toString()
+- Generator.prototype.next()
+- Generator.prototype.return()
+- Generator.prototype.throw()
+- GeneratorFunction() constructor
+- Intl.getCanonicalLocales()
+- Intl.supportedValuesOf()
+- Intl.Collator
+- Intl.DateTimeFormat
+- Intl.ListFormat
+- Intl.NumberFormat
+- Intl.PluralRules
+- Intl.RelativeTimeFormat
+- Intl.Segmenter
+- Iterator() constructor
+- Iterator.prototype[@@iterator]()
+- Iterator.prototype.drop()
+- Iterator.prototype.every()
+- Iterator.prototype.filter()
+- Iterator.prototype.find()
+- Iterator.prototype.flatMap()
+- Iterator.prototype.forEach()
+- Iterator.from()
+- Iterator.prototype.map()
+- Iterator.prototype.reduce()
+- Iterator.prototype.some()
+- Iterator.prototype.take()
+- Iterator.prototype.toArray()
+- JSON.parse()
+- JSON.stringify()
+- Map() constructor
+- Map[@@species]
+- Map.prototype.size
+- Map.prototype[@@iterator]()
+- Map.prototype.clear()
+- Map.prototype.delete()
+- Map.prototype.entries()
+- Map.prototype.forEach()
+- Map.prototype.get()
+- Map.groupBy()
+- Map.prototype.has()
+- Map.prototype.keys()
+- Map.prototype.set()
+- Map.prototype.values()
+- Math.E
+- Math.LN10
+- Math.LN2
+- Math.LOG10E
+- Math.LOG2E
+- Math.PI
+- Math.SQRT1_2
+- Math.SQRT2
+- Math.abs()
+- Math.acos()
+- Math.acosh()
+- Math.asin()
+- Math.asinh()
+- Math.atan()
+- Math.atan2()
+- Math.atanh()
+- Math.cbrt()
+- Math.ceil()
+- Math.clz32()
+- Math.cos()
+- Math.cosh()
+- Math.exp()
+- Math.expm1()
+- Math.floor()
+- Math.fround()
+- Math.hypot()
+- Math.imul()
+- Math.log()
+- Math.log10()
+- Math.log1p()
+- Math.log2()
+- Math.max()
+- Math.min()
+- Math.pow()
+- Math.random()
+- Math.round()
+- Math.sign()
+- Math.sin()
+- Math.sinh()
+- Math.sqrt()
+- Math.tan()
+- Math.tanh()
+- Math.trunc()
+- Number() constructor
+- Number.EPSILON
+- Number.MAX_SAFE_INTEGER
+- Number.MAX_VALUE
+- Number.MIN_SAFE_INTEGER
+- Number.MIN_VALUE
+- Number.NaN
+- Number.NEGATIVE_INFINITY
+- Number.POSITIVE_INFINITY
+- Number.isFinite()
+- Number.isInteger()
+- Number.isNaN()
+- Number.isSafeInteger()
+- Number.parseFloat()
+- Number.parseInt()
+- Number.prototype.toExponential()
+- Number.prototype.toFixed()
+- Number.prototype.toLocaleString()
+- Number.prototype.toPrecision()
+- Number.prototype.toString()
+- Number.prototype.valueOf()
+- Object() constructor
+- Object.prototype.constructor
+- Object.prototype.__proto__
+- Object.prototype.__defineGetter__()
+- Object.prototype.__defineSetter__()
+- Object.prototype.__lookupGetter__()
+- Object.prototype.__lookupSetter__()
+- Object.assign()
+- Object.create()
+- Object.defineProperties()
+- Object.defineProperty()
+- Object.entries()
+- Object.freeze()
+- Object.fromEntries()
+- Object.getOwnPropertyDescriptor()
+- Object.getOwnPropertyDescriptors()
+- Object.getOwnPropertyNames()
+- Object.getOwnPropertySymbols()
+- Object.getPrototypeOf()
+- Object.groupBy()
+- Object.hasOwn()
+- Object.prototype.hasOwnProperty()
+- Object.is()
+- Object.isExtensible()
+- Object.isFrozen()
+- Object.prototype.isPrototypeOf()
+- Object.isSealed()
+- Object.keys()
+- Object.preventExtensions()
+- Object.prototype.propertyIsEnumerable()
+- Object.seal()
+- Object.setPrototypeOf()
+- Object.prototype.toLocaleString()
+- Object.prototype.toString()
+- Object.prototype.valueOf()
+- Object.values()
+- valueOf()
+- __defineGetter__()
+- __proto__
+- propertyIsEnumerable()
+- Promise() constructor
+- Promise[@@species]
+- Promise.all()
+- Promise.allSettled()
+- Promise.any()
+- Promise.prototype.catch()
+- Promise.prototype.finally()
+- Promise.race()
+- Promise.reject()
+- Promise.resolve()
+- Promise.prototype.then()
+- Promise.withResolvers()
+- Proxy/handler
+- handler.apply()
+- handler.construct()
+- handler.defineProperty()
+- handler.deleteProperty()
+- handler.get()
+- handler.getOwnPropertyDescriptor()
+- handler.getPrototypeOf()
+- handler.has()
+- handler.isExtensible()
+- handler.ownKeys()
+- handler.preventExtensions()
+- handler.set()
+- handler.setPrototypeOf()
+- Reflect.apply()
+- Reflect.construct()
+- Reflect.defineProperty()
+- Reflect.deleteProperty()
+- Reflect.get()
+- Reflect.getOwnPropertyDescriptor()
+- Reflect.getPrototypeOf()
+- Reflect.has()
+- Reflect.isExtensible()
+- Reflect.ownKeys()
+- Reflect.preventExtensions()
+- Reflect.set()
+- Reflect.setPrototypeOf()
+- RegExp() constructor
+- RegExp[@@species]
+- RegExp.prototype.dotAll
+- RegExp.prototype.flags
+- RegExp.prototype.global
+- RegExp.prototype.hasIndices
+- RegExp.prototype.ignoreCase
+- RegExp.input ($_)
+- RegExp: lastIndex
+- RegExp.lastMatch ($&)
+- RegExp.lastParen ($+)
+- RegExp.leftContext ($`)
+- RegExp.prototype.multiline
+- RegExp.$1, …, RegExp.$9
+- RegExp.rightContext ($')
+- RegExp.prototype.source
+- RegExp.prototype.sticky
+- RegExp.prototype.unicode
+- RegExp.prototype.unicodeSets
+- RegExp.prototype[@@match]()
+- RegExp.prototype[@@matchAll]()
+- RegExp.prototype[@@replace]()
+- RegExp.prototype[@@search]()
+- RegExp.prototype[@@split]()
+- RegExp.prototype.compile()
+- RegExp.prototype.exec()
+- RegExp.prototype.test()
+- RegExp.prototype.toString()
+- Set() constructor
+- Set[@@species]
+- Set.prototype.size
+- Set.prototype[@@iterator]()
+- Set.prototype.add()
+- Set.prototype.clear()
+- Set.prototype.delete()
+- Set.prototype.difference()
+- Set.prototype.entries()
+- Set.prototype.forEach()
+- Set.prototype.has()
+- Set.prototype.intersection()
+- Set.prototype.isDisjointFrom()
+- Set.prototype.isSubsetOf()
+- Set.prototype.isSupersetOf()
+- Set.prototype.keys()
+- Set.prototype.symmetricDifference()
+- Set.prototype.union()
+- Set.prototype.values()
+- SharedArrayBuffer() constructor
+- SharedArrayBuffer[@@species]
+- SharedArrayBuffer.prototype.byteLength
+- SharedArrayBuffer.prototype.growable
+- SharedArrayBuffer.prototype.maxByteLength
+- SharedArrayBuffer.prototype.grow()
+- SharedArrayBuffer.prototype.slice()
+- String() constructor
+- String: length
+- String.prototype[@@iterator]()
+- String.prototype.anchor()
+- String.prototype.at()
+- String.prototype.big()
+- String.prototype.blink()
+- String.prototype.bold()
+- String.prototype.charAt()
+- String.prototype.charCodeAt()
+- String.prototype.codePointAt()
+- String.prototype.concat()
+- String.prototype.endsWith()
+- String.prototype.fixed()
+- String.prototype.fontcolor()
+- String.prototype.fontsize()
+- String.fromCharCode()
+- String.fromCodePoint()
+- String.prototype.includes()
+- String.prototype.indexOf()
+- String.prototype.isWellFormed()
+- String.prototype.italics()
+- String.prototype.lastIndexOf()
+- String.prototype.link()
+- String.prototype.localeCompare()
+- String.prototype.match()
+- String.prototype.matchAll()
+- String.prototype.normalize()
+- String.prototype.padEnd()
+- String.prototype.padStart()
+- String.raw()
+- String.prototype.repeat()
+- String.prototype.replace()
+- String.prototype.replaceAll()
+- String.prototype.search()
+- String.prototype.slice()
+- String.prototype.small()
+- String.prototype.split()
+- String.prototype.startsWith()
+- String.prototype.strike()
+- String.prototype.sub()
+- String.prototype.substr()
+- String.prototype.substring()
+- String.prototype.sup()
+- String.prototype.toLocaleLowerCase()
+- String.prototype.toLocaleUpperCase()
+- String.prototype.toLowerCase()
+- String.prototype.toString()
+- String.prototype.toUpperCase()
+- String.prototype.toWellFormed()
+- String.prototype.trim()
+- String.prototype.trimEnd()
+- String.prototype.trimStart()
+- String.prototype.valueOf()
+- Symbol() constructor
+- Symbol.asyncIterator
+- Symbol.prototype.description
+- Symbol.hasInstance
+- Symbol.isConcatSpreadable
+- Symbol.iterator
+- Symbol.match
+- Symbol.matchAll
+- Symbol.replace
+- Symbol.search
+- Symbol.species
+- Symbol.split
+- Symbol.toPrimitive
+- Symbol.toStringTag
+- Symbol.unscopables
+- Symbol.prototype[@@toPrimitive]()
+- Symbol.for()
+- Symbol.keyFor()
+- Symbol.prototype.toString()
+- Symbol.prototype.valueOf()
+- TypedArray[@@species]
+- TypedArray.prototype.buffer
+- TypedArray.prototype.byteLength
+- TypedArray.prototype.byteOffset
+- TypedArray.BYTES_PER_ELEMENT
+- TypedArray.prototype.length
+- TypedArray.prototype[@@iterator]()
+- TypedArray.prototype.at()
+- TypedArray.prototype.copyWithin()
+- TypedArray.prototype.entries()
+- TypedArray.prototype.every()
+- TypedArray.prototype.fill()
+- TypedArray.prototype.filter()
+- TypedArray.prototype.find()
+- TypedArray.prototype.findIndex()
+- TypedArray.prototype.findLast()
+- TypedArray.prototype.findLastIndex()
+- TypedArray.prototype.forEach()
+- TypedArray.from()
+- TypedArray.prototype.includes()
+- TypedArray.prototype.indexOf()
+- TypedArray.prototype.join()
+- TypedArray.prototype.keys()
+- TypedArray.prototype.lastIndexOf()
+- TypedArray.prototype.map()
+- TypedArray.of()
+- TypedArray.prototype.reduce()
+- TypedArray.prototype.reduceRight()
+- TypedArray.prototype.reverse()
+- TypedArray.prototype.set()
+- TypedArray.prototype.slice()
+- TypedArray.prototype.some()
+- TypedArray.prototype.sort()
+- TypedArray.prototype.subarray()
+- TypedArray.prototype.toLocaleString()
+- TypedArray.prototype.toReversed()
+- TypedArray.prototype.toSorted()
+- TypedArray.prototype.toString()
+- TypedArray.prototype.values()
+- TypedArray.prototype.with()
+- WeakMap() constructor
+- WeakMap.prototype.delete()
+- WeakMap.prototype.get()
+- WeakMap.prototype.has()
+- WeakMap.prototype.set()
+- WeakRef() constructor
+- WeakRef.prototype.deref()
+- WeakSet() constructor
+- WeakSet.prototype.add()
+- WeakSet.prototype.delete()
+- WeakSet.prototype.has()

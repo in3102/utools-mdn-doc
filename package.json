@@ -1,6 +1,6 @@
 {
   "name": "utools-mdn-doc",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MDN 文档",
   "scripts": {
     "javascript": "node work.js javascript",

@@ -6,3 +6,4 @@ package-lock.json
 /data/*
 /public/*/docs/*
 /public/*/indexes.json
+/test
