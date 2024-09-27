@@ -2,8 +2,8 @@
     "version": "1.0.0",
     "pluginName": "HTTP 文档",
     "description": "HTTP MDN 文档",
-    "author": "uTools官方",
-    "homepage": "https://u.tools",
+    "author": "IT老大哥(改自:uTools官方)",
+    "homepage": "http://www.itldg.com",
     "preload": "preload.js",
     "logo": "logo.png",
     "features": [

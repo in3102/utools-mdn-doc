@@ -1,17 +1,19 @@
 {
-  "name": "utools-mdn-doc",
-  "version": "1.0.0",
-  "description": "MDN 文档",
-  "scripts": {
-    "javascript": "node work.js javascript",
-    "api": "node work.js api",
-    "css": "node work.js css",
-    "html": "node work.js html",
-    "http": "node work.js http"
-  },
-  "author": "beta",
-  "license": "MIT",
-  "devDependencies": {
-    "highlight.js": "^9.15.10"
-  }
+	"name": "utools-mdn-doc",
+	"version": "1.0.6",
+	"description": "MDN 文档",
+	"scripts": {
+		"javascript": "node work.js JavaScript",
+		"api": "node work.js API",
+		"css": "node work.js CSS",
+		"html": "node work.js HTML",
+		"http": "node work.js HTTP",
+		"xpath": "node work.js XPath",
+		"all": "node work.js JavaScript && node work.js API && node work.js CSS && node work.js HTML && node work.js HTTP && node work.js XPath"
+	},
+	"author": "beta",
+	"license": "MIT",
+	"devDependencies": {
+		"highlight.js": "^11.10.0"
+	}
 }

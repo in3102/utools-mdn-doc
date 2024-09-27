@@ -1,0 +1,18 @@
+{
+  "version": "1.0.4",
+  "pluginName": "XPath 文档",
+  "description": "XPath MDN 文档",
+  "author": "IT老大哥(改自:uTools官方)",
+  "homepage": "http://www.itldg.com",
+  "preload": "preload.js",
+  "logo": "logo.png",
+  "features": [
+    {
+      "code": "doc",
+      "explain": "XPath MDN 文档速查",
+      "cmds": [
+        "XPath"
+      ]
+    }
+  ]
+}
